@@ -1,14 +1,20 @@
 var app = angular.module('app', ['angularLazyImg']);
 
 app.controller('ImgCtrl', function($scope, $http) {
+	$scope.folder='';
 
 
+	$scope.filterChange=function(){
+		$scope.fetchImages($scope.folder);
+	}
 
 	$scope.fetchImages = function(folder) {
 		var folderName = folder ? folder : "";
+		$scope.folder=folder;
 		$http({
 			method: 'GET',
-			url: "/users/readFiles/" + folderName
+			url: "/users/readFiles/" + folderName,
+			params: {filter:$scope.userFilter? $scope.userFilter :''}
 		}).then(function(resp) {
 			console.log("succ resp", resp);
 			if (resp.status == 200) {
@@ -44,6 +50,25 @@ app.controller('ImgCtrl', function($scope, $http) {
 		}, function(err) {
 			console.log("succ resp", err);
 		});
+	}
+
+	$scope.verifyImage = function(id,data){
+		
+		console.log(id)
+		$http({
+			method: 'POST',
+			url: "/users/verify/"+id,
+		//	data: {'id': id}
+		}).then(function(resp) {
+			console.log("succ resp", resp);
+			if (resp.status == 200) {
+					data.counter = data.counter+1			
+			}
+		}, function(err) {
+			console.log("succ resp", err);
+		});
+
+
 	}
 
 	$scope.fetchImages();

@@ -6,11 +6,17 @@ var fs = require("fs");
 router.get('/readFiles/:path*?', function(req, res, next) {
 
 	if(!req.params.path) req.params.path='';
-  	readImage(req.params.path,function(err,data){
+  	readImage(req.params.path,req.params.filter,function(err,data){
   		res.json({status:200,data:data})
   	})
 });
 
+router.get('/archivedImages', function(req, res, next) {
+
+  	readArchivedImage(function(err,data){
+  		res.json({status:200,data:data})
+  	})
+});
 
 router.delete("/delete/:filename/:folder*?", function(req, res, next) {
 
@@ -41,8 +47,54 @@ router.delete("/delete/:filename/:folder*?", function(req, res, next) {
 
 });
 
-function readImage(path,cb){
-	imageObj.find({isArchive:false}).exec(function(err, data) {
+
+router.post("/verify/:id",function(req,res){
+  var id = req.params.id ; 
+
+  imageObj.update({_id:id},{$inc:{counter:1}}).exec(function(err, data) {
+    if(err){
+      if(err) res.status(401).json({error:err});
+    }
+
+      res.json({status:200,message:"success",data:data});
+
+  });
+})
+
+function readArchivedImage(cb){
+	imageObj.find({isArchive:true}).exec(function(err, data) {
+
+		if(err) return cb(err);
+		var dataSend=[];
+		data.forEach(function(value){
+			dataSend.push({
+				id:value.id,
+				folder: 'archived',
+				type: 'file',
+				filename : value.title,
+				base_path : "/assets/archived/",
+				counter : value.counter
+
+			})
+		})
+		cb(null,dataSend);
+  	});
+}
+
+function readImage(path,filter,cb){
+	var filterQuery={};
+	filterQuery.isArchive=false;
+	if(filter) {
+		if(filter>2){
+			filterQuery.counter={$gt:2};
+		}else{
+			filterQuery.counter=filter;
+		}
+	}else{
+		filterQuery.counter={$gte:0};
+	}	
+	console.log(filterQuery)
+	imageObj.find(filterQuery).exec(function(err, data) {
 
 		if(err) return cb(err);
 		var dataSend=[];
@@ -55,7 +107,8 @@ function readImage(path,cb){
 						folder: '',
 						type: 'file',
 						filename : value.title,
-						base_path : "/assets/img/"
+						base_path : "/assets/img/",
+						counter : value.counter
 
 					});
 				}else{
@@ -77,7 +130,8 @@ function readImage(path,cb){
 						folder: value.folder,
 						type: 'file',
 						filename : value.title,
-						base_path : "/assets/img/"+value.folder+"/"
+						base_path : "/assets/img/"+value.folder+"/",
+						counter : value.counter
 					});
 				}	
 			}

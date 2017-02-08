@@ -40,11 +40,11 @@
 				
 				<div class="filter-opt">
                  Amount of points 
-				 <select>
-				   <option>0</option>
-				   <option>1</option>
-				   <option>2</option>
-				   <option>3</option>
+				 <select class="form-control" ng-model="userFilter" ng-change="filterChange()">
+				   <option value="0">0</option>
+				   <option value="1" >1</option>
+				   <option  value="2" >2</option>
+				   <option value="3"> >2</option>
 				 </select>
 			    </div>
 			 </div>
@@ -54,18 +54,21 @@
             <div  class="col-lg-4 col-md-4 col-sm-6 col-xs-12" ng-repeat= "data in ImageData">	
 
 				<div class="hover ehover1" ng-if="data.type=='file'">
-					<img class="b-lazy img-responsive" lazy-img="{{data.base_path}}{{data.filename}}"
+					<img style="height:240px;width:320px" class="b-lazy img-responsive" lazy-img="{{data.base_path}}{{data.filename}}"
 	 data-src="assets/img/p13.jpg" alt="" src="spinner.gif">
 						<div class="overlay">
-							<h2><a href="#">Folder Name1</a></h2>
+							<h2><a ng-click="fetchImages('')" ng-if="data.folder=='sub_folder'" href="#">Go To Parent</a>
+								<a ng-if="data.folder==''" href="#"></a>
+							</h2>
 							<button class="btn btn-danger" ng-click="deleteImage(data.id,data.filename,data.folder)"  ><i class="icon-trash icon-white"></i> Delete</button>
+							<button class="btn btn-danger" ng-click="verifyImage(data.id,data)"  ><i class="icon-trash icon-white"></i> Verify </button>
+							<div class="btn btn-danger"   style="border-radius: 20px;color: #000;background-color: #fff;font-weight: bold"> {{data.counter ? data.counter:0}}</div>	
 						</div>				
 				</div>
 				<div class="hover ehover1" ng-if="data.type=='folder'" ng-click="fetchImages('sub_folder')">
 					<img class="b-lazy img-responsive"  alt="" src="folder.gif">
 						<div class="overlay">
-							<h2><a href="#">Folder Name1</a></h2>
-							<button class="btn btn-danger"  ><i class="icon-trash icon-white"></i> Delete</button>
+							<h2><a href="#">{{data.folder}}</a></h2>
 						</div>				
 				</div>
             </div>
