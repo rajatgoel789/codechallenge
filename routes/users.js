@@ -4,9 +4,8 @@ var imageObj = require('../app/models/image');
 var fs = require("fs");
 /* GET home page. */
 router.get('/readFiles/:path*?', function(req, res, next) {
-
 	if(!req.params.path) req.params.path='';
-  	readImage(req.params.path,req.params.filter,function(err,data){
+  	readImage(req.params.path,req.query.filter,function(err,data){
   		res.json({status:200,data:data})
   	})
 });
@@ -84,16 +83,15 @@ function readArchivedImage(cb){
 function readImage(path,filter,cb){
 	var filterQuery={};
 	filterQuery.isArchive=false;
-	if(filter) {
-		if(filter>2){
-			filterQuery.counter={$gt:2};
-		}else{
-			filterQuery.counter=filter;
-		}
-	}else{
 		filterQuery.counter={$gte:0};
-	}	
-	console.log(filterQuery)
+
+	// if(filter) {
+	// 	if(filter>2){
+	// 		filterQuery.counter={$gt:2};
+	// 	}else{
+	// 		filterQuery.counter=filter;
+	// 	}
+	// }	
 	imageObj.find(filterQuery).exec(function(err, data) {
 
 		if(err) return cb(err);
@@ -102,6 +100,7 @@ function readImage(path,filter,cb){
 		data.forEach(function(value){
 			if(path==''){
 				if(value.folder==''){
+					if(!filter || (filter>2 && value.counter>2) || (filter == value.counter) )
 					dataSend.push({
 						id:value.id,
 						folder: '',

@@ -46,6 +46,7 @@ app.controller('ImgCtrl', function($scope, $http) {
 				})
 
 				$scope.ImageData = $scope.ImageDataNew;
+				$scope.fetchArchiveImages();
 			}
 		}, function(err) {
 			console.log("succ resp", err);
@@ -71,6 +72,25 @@ app.controller('ImgCtrl', function($scope, $http) {
 
 	}
 
+	$scope.fetchArchiveImages = function(){
+
+		$http({
+			method: 'GET',
+			url: "/users/archivedImages/" ,
+			params: {filter:$scope.userFilter? $scope.userFilter :''}
+		}).then(function(resp) {
+			console.log("succ resp", resp);
+			if (resp.status == 200) {
+
+				$scope.archiveData = resp.data.data
+			}
+		}, function(err) {
+			console.log("succ resp", err);
+		});
+
+
+	}
+	$scope.fetchArchiveImages();	
 	$scope.fetchImages();
 
 });
