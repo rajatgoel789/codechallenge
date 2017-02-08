@@ -23,8 +23,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> 
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0/angular.min.js"></script>	
 	<!-- // <script src="http://getbootstrap.com/dist/js/bootstrap.min.js"></script> -->
+	<script type="text/javascript" src="javascripts/angular-lazy-img.js"></script>
 
 	<script type="text/javascript" src="javascripts/app.js"></script>
+
+
   
 	</head>
 
@@ -45,25 +48,31 @@
 				 </select>
 			    </div>
 			 </div>
-	   <div class="row">
+	   <div class="row" >
 
-           
-
-			   
 			 
-            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">				
-				<div class="hover ehover1">
-					<img class="b-lazy img-responsive" src="assets/img/p13.jpg"
-	 data-src="assets/img/p13.jpg" alt="">
+            <div  class="col-lg-4 col-md-4 col-sm-6 col-xs-12" ng-repeat= "data in ImageData">	
+
+				<div class="hover ehover1" ng-if="data.type=='file'">
+					<img class="b-lazy img-responsive" lazy-img="{{data.base_path}}{{data.filename}}"
+	 data-src="assets/img/p13.jpg" alt="" src="spinner.gif">
 						<div class="overlay">
 							<h2><a href="#">Folder Name1</a></h2>
-							<a class="btn btn-danger" href="#"><i class="icon-trash icon-white"></i> Delete</a>
+							<button class="btn btn-danger" ng-click="deleteImage(data.id,data.filename,data.folder)"  ><i class="icon-trash icon-white"></i> Delete</button>
+						</div>				
+				</div>
+				<div class="hover ehover1" ng-if="data.type=='folder'" ng-click="fetchImages('sub_folder')">
+					<img class="b-lazy img-responsive"  alt="" src="folder.gif">
+						<div class="overlay">
+							<h2><a href="#">Folder Name1</a></h2>
+							<button class="btn btn-danger"  ><i class="icon-trash icon-white"></i> Delete</button>
 						</div>				
 				</div>
             </div>
+
 			
 			
-             <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">				
+             <!-- <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">				
 				<div class="hover ehover1">
 					<img class="b-lazy img-responsive" src="assets/img/p18.jpg"
 	 data-src="assets/img/p13.jpg" alt="">
@@ -121,7 +130,7 @@
 							<a class="btn btn-danger" href="#"><i class="icon-trash icon-white"></i> Delete</a>
 						</div>				
 				</div>
-            </div>
+            </div> -->
 			
 			
            
