@@ -29,16 +29,16 @@ router.delete("/delete/:filename/:folder*?", function(req, res, next) {
 
 	imageObj.update({_id:req.query.id},{$set:{isArchive:true,counter:0}}).exec(function(err, data) {
 
-		if(err) res.status(404).json({error:err});
+		if(err) return res.status(404).json({error:err});
 
 		imageObj.update({folder:req.params.folder,isArchive:false},{$inc:{counter:1}},{multi:true}).exec(function(err, data) {
 
-			if(err) res.status(404).json({error:err});
+			if(err) return  res.status(404).json({error:err});
 
 			move(oldPath,newPath,function(err,data){
-				if(err) res.status(404).json({error:err});
+				if(err) return res.status(404).json({error:err});
 
-				res.json({status:200,message:"success"});
+				return res.json({status:200,message:"success"});
 			})
 		});
 	});
